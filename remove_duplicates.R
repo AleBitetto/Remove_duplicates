@@ -40,7 +40,14 @@ if (nrow(single_files) > 0){
 
 # duplicated files
 final_df = final_df %>%
-  filter(isdupl_check == 2)
+  filter(isdupl_check == 2) %>%
+  filter(!fileroot_nosuffix %in% exclude)
+
+# exclude duplicates with different file extension
+final_df = final_df %>%
+  group_by(fileroot_nosuffix) %>%
+  mutate(number_ext = uniqueN(fileext)) %>%
+  filter(number_ext == 1)
 
 # check if latest modified date of duplicated is after "original" file
 error_file = c()
